@@ -169,15 +169,13 @@ func tarFile(tarWriter *tar.Writer, source, dest string) error {
 
 		if header.Typeflag == tar.TypeReg {
 			file, err := os.Open(path)
-			if err != nil {
-				return fmt.Errorf("%s: open: %v", path, err)
-			}
 			defer file.Close()
-
-			_, err = io.CopyN(tarWriter, file, info.Size())
-			if err != nil && err != io.EOF {
-				return fmt.Errorf("%s: copying contents: %v", path, err)
-			}
+			if err == nil {
+				_, err = io.CopyN(tarWriter, file, info.Size())
+				if err != nil && err != io.EOF {
+					return fmt.Errorf("%s: copying contents: %v", path, err)
+				}			
+			}	
 		}
 		return nil
 	})
